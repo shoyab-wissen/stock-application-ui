@@ -1,0 +1,6 @@
+export const DEPOSIT = "DEPOSIT";
+export const WITHDRAW = "WITHDRAW";
+export const TRANSFER = "TRANSFER";
+export const GET_BALANCE = "GET_BALANCE";
+export const GET_STATEMENT = "GET_STATEMENT";
+export const GET_RECENT_TRANSACTIONS = "GET_RECENT_TRANSACTIONS";
