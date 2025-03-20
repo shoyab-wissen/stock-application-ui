@@ -1,0 +1,91 @@
+.stocks {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.stocks-header {
+  margin-bottom: 32px;
+}
+
+.stocks-header h1 {
+  color: #333;
+}
+
+.stocks-table {
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.stocks-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.stocks-table th,
+.stocks-table td {
+  padding: 16px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+
+.stocks-table th {
+  background-color: #f8f9fa;
+  font-weight: 500;
+  color: #666;
+}
+
+.gain {
+  color: #22c55e;
+}
+
+.loss {
+  color: #ef4444;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.action-btn {
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s;
+}
+
+.action-btn.buy {
+  background-color: #22c55e;
+  color: white;
+}
+
+.action-btn.buy:hover {
+  background-color: #16a34a;
+}
+
+.action-btn.watch {
+  background-color: #3b82f6;
+  color: white;
+}
+
+.action-btn.watch:hover {
+  background-color: #2563eb;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  font-size: 18px;
+  color: #666;
+}
+
+.error {
+  text-align: center;
+  padding: 40px;
+  color: #ef4444;
+}

@@ -7,6 +7,7 @@ import Login from './Screens/Login';
 import Portfolio from './Screens/Portfolio';
 import Watchlist from './Screens/Watchlist';
 import Profile from './Screens/Profile';
+import Stocks from './Screens/Stocks';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -16,6 +17,14 @@ function App() {
       <Routes>
         <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/stocks"
+          element={
+            <ProtectedRoute>
+              <Stocks />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/portfolio"
           element={
@@ -45,4 +54,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

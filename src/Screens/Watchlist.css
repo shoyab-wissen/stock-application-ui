@@ -1,5 +1,5 @@
 .watchlist {
-  padding: 2rem;
+  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
 }
@@ -8,104 +8,144 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 30px;
 }
 
-.watchlist-header h1 {
-  color: #1a1a1a;
+.add-stock-section {
+  display: flex;
+  gap: 10px;
+}
+
+.stock-input {
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
 }
 
 .add-stock-btn {
-  background-color: #00ff88;
-  color: #1a1a1a;
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
   border: none;
-  padding: 0.75rem 1.5rem;
   border-radius: 4px;
-  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  font-size: 16px;
 }
 
-.add-stock-btn:hover {
-  background-color: #00cc6a;
+.add-stock-btn:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
 }
 
 .watchlist-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 20px;
 }
 
 .stock-card {
-  background-color: #ffffff;
-  padding: 1.5rem;
+  background-color: white;
   border-radius: 8px;
+  padding: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .stock-info {
-  margin-bottom: 1rem;
+  margin-bottom: 15px;
 }
 
-.stock-info h2 {
-  color: #1a1a1a;
-  font-size: 1.5rem;
-  margin-bottom: 0.5rem;
+.stock-name {
+  color: #666;
+  font-size: 14px;
+  margin: 5px 0;
 }
 
 .stock-price {
-  color: #666666;
-  font-size: 1.25rem;
+  font-size: 24px;
   font-weight: 600;
+  color: #333;
+  margin: 10px 0;
+}
+
+.stock-details {
+  background-color: #f8f9fa;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+
+.detail-row span:first-child {
+  color: #666;
 }
 
 .stock-change {
-  margin-bottom: 1.5rem;
+  margin-bottom: 15px;
+  text-align: right;
 }
 
 .gain {
-  color: #00cc6a;
+  color: #22c55e;
+  font-weight: 500;
 }
 
 .loss {
-  color: #ff4444;
+  color: #ef4444;
+  font-weight: 500;
 }
 
 .card-actions {
   display: flex;
-  gap: 1rem;
+  gap: 10px;
 }
 
 .action-btn {
   flex: 1;
-  padding: 0.75rem;
+  padding: 8px 16px;
   border: none;
-  border-radius: 4px;
-  font-weight: 600;
+  border-radius: 6px;
+  font-weight: 500;
   cursor: pointer;
-  transition: opacity 0.3s ease;
+  transition: background-color 0.2s;
+}
+
+.action-btn.buy {
+  background-color: #22c55e;
+  color: white;
+}
+
+.action-btn.remove {
+  background-color: #ef4444;
+  color: white;
 }
 
 .action-btn:hover {
   opacity: 0.9;
 }
 
-.action-btn.buy {
-  background-color: #00ff88;
-  color: #1a1a1a;
+.empty-watchlist {
+  text-align: center;
+  padding: 40px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.action-btn.remove {
-  background-color: #ff4444;
-  color: #ffffff;
+.loading, .error {
+  text-align: center;
+  padding: 20px;
+  font-size: 18px;
 }
 
-@media (max-width: 768px) {
-  .watchlist {
-    padding: 1rem;
-  }
-  
-  .watchlist-grid {
-    grid-template-columns: 1fr;
-  }
+.error {
+  color: #f44336;
 }
+
+
