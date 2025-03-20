@@ -1,20 +1,14 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
-// import { loginUser } from '../redux/user/UserAction';
+import { useNavigate } from 'react-router-dom';
+import { verifyUserForReset } from '../redux/user/UserAction';
 
-function Login() {
-    const [formData, setFormData] = useState({
-        username: '',
-        password: ''
-    });
+function ForgotPassword() {
+    const [formData, setFormData] = useState({ username: '', dob: '' });
     const [error, setError] = useState('');
     
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const location = useLocation();
-
-    const from = location.state?.from?.pathname || "/portfolio";
 
     const handleChange = (e) => {
         setFormData({
@@ -26,24 +20,23 @@ function Login() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
-        
+
         try {
-            const response = await dispatch(loginUser(formData.username, formData.password));
+            const response = await dispatch(verifyUserForReset(formData.username, formData.dob));
             
-            if (response && (response.username || response.name)) {
-                navigate(from, { replace: true });
+            if (response.success) {
+                navigate('/change-password', { state: { username: formData.username } });
             } else {
-                setError('Invalid response from server');
+                setError('Invalid Username or Date of Birth');
             }
         } catch (err) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.message || 'Invalid username or password');
+            setError('Something went wrong. Try again.');
         }
     };
 
     return (
         <div className="card" style={{ maxWidth: '400px', margin: '2rem auto' }}>
-            <h1>Login to Stock Market</h1>
+            <h1>Forgot Password</h1>
             {error && <div className="error-message">{error}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
@@ -59,26 +52,22 @@ function Login() {
                     />
                 </div>
                 <div className="form-group">
-                    <label className="form-label">Password</label>
+                    <label className="form-label">Date of Birth</label>
                     <input 
-                        type="password" 
-                        name="password"
+                        type="date" 
+                        name="dob"
                         className="form-input" 
-                        placeholder="Enter your password"
-                        value={formData.password}
+                        value={formData.dob}
                         onChange={handleChange}
                         required
                     />
                 </div>
-                <button type="submit" className="btn btn-register" style={{ width: '100%' }}>
-                    Login
+                <button type="submit" className="btn btn-reset" style={{ width: '100%' }}>
+                    Verify
                 </button>
             </form>
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
-            </div>
         </div>
     );
 }
 
-export default Login;
+export default ForgotPassword;

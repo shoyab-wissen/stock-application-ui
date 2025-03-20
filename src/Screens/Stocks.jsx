@@ -6,6 +6,13 @@ function Stocks() {
   const [stocks, setStocks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [buyError, setBuyError] = useState(null);
+
+  // Assuming user ID is stored in localStorage after login
+  const userId = localStorage.getItem('userId') || 1;
 
   useEffect(() => {
     fetchStocks();
@@ -13,12 +20,39 @@ function Stocks() {
 
   const fetchStocks = async () => {
     try {
-      const response = await axios.get('http://localhost:8081/api/stocks');
+      const response = await axios.get('http://localhost:9999/trading/api/stocks');
       setStocks(response.data.data);
       setLoading(false);
     } catch (err) {
       setError('Failed to fetch stocks');
       setLoading(false);
+    }
+  };
+
+  const handleBuyClick = (stock) => {
+    setSelectedStock(stock);
+    setShowBuyModal(true);
+    setBuyError(null);
+  };
+
+  const handleBuySubmit = async () => {
+    try {
+      const buyData = {
+        userId: userId,
+        stockSymbol: selectedStock.symbol,
+        quantity: parseInt(quantity),
+        price: selectedStock.price,
+        tradeType: "BUY"
+      };
+      console.log(buyData);
+      
+      await axios.post('http://localhost:9999/trading/api/trade/buy', buyData);
+      setShowBuyModal(false);
+      setQuantity(1);
+      // Optionally refresh the stocks list
+      fetchStocks();
+    } catch (err) {
+      setBuyError(err.response?.data?.message || 'Failed to process buy order');
     }
   };
 
@@ -59,7 +93,7 @@ function Stocks() {
                   </td>
                   <td>
                     <div className="action-buttons">
-                      <button className="action-btn buy">Buy</button>
+                      <button className="action-btn buy" onClick={() => handleBuyClick(stock)}>Buy</button>
                       <button className="action-btn watch">Watch</button>
                     </div>
                   </td>
@@ -69,6 +103,39 @@ function Stocks() {
           </tbody>
         </table>
       </div>
+
+      {showBuyModal && selectedStock && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h2>Buy {selectedStock.symbol}</h2>
+            <div className="modal-content">
+              <div className="stock-info">
+                <p>Current Price: ${selectedStock.price.toFixed(2)}</p>
+                <p>Total Cost: ${(selectedStock.price * quantity).toFixed(2)}</p>
+              </div>
+              <div className="form-group">
+                <label htmlFor="quantity">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                />
+              </div>
+              {buyError && <div className="error-message">{buyError}</div>}
+              <div className="modal-actions">
+                <button className="action-btn buy" onClick={handleBuySubmit}>
+                  Confirm Buy
+                </button>
+                <button className="action-btn cancel" onClick={() => setShowBuyModal(false)}>
+                  Cancel
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -8,7 +8,7 @@ function Watchlist() {
     getWatchlist();
   }, []);
   function getWatchlist() {
-    axios.get('http://localhost:8081/api/portfolio/1/watchlist')
+    axios.get('http://localhost:8081/api/portfolio/2/watchlist')
     .then(
       (response) => {
         console.log(response.data.data);
