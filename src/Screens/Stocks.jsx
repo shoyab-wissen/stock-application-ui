@@ -34,7 +34,15 @@ function Stocks() {
     setShowBuyModal(true);
     setBuyError(null);
   };
-
+  const addToWatchlist = async (stock) => {
+    axios.post("http://localhost:9999/portfolio/api/portfolio/1/watchlist/" + stock.id)
+    .then(
+      (response) => {
+        console.log(response.data.data);
+      }
+    )
+    
+  }
   const handleBuySubmit = async () => {
     try {
       const buyData = {
@@ -94,7 +102,7 @@ function Stocks() {
                   <td>
                     <div className="action-buttons">
                       <button className="action-btn buy" onClick={() => handleBuyClick(stock)}>Buy</button>
-                      <button className="action-btn watch">Watch</button>
+                      <button className="action-btn watch" onClick={() => addToWatchlist(stock)}>Watch</button>
                     </div>
                   </td>
                 </tr>

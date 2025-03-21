@@ -1,84 +1,103 @@
-import { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
-// import { loginUser } from '../redux/user/UserAction';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { loginSuccess } from '../store/slices/authSlice';
+import { setProfileData } from '../store/slices/profileSlice';
+import { setPortfolioData } from '../store/slices/portfolioSlice';
+import { setWatchlistData } from '../store/slices/watchlistSlice';
+import { DEMO_USER } from '../constants/demoUser';
+import './Login.css';
 
 function Login() {
-    const [formData, setFormData] = useState({
-        username: '',
-        password: ''
-    });
-    const [error, setError] = useState('');
-    
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
-    const location = useLocation();
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { loading } = useSelector(state => state.auth);
 
-    const from = location.state?.from?.pathname || "/portfolio";
+  const handleDemoLogin = () => {
+    // Simulate loading
+    dispatch(loginSuccess({
+      id: DEMO_USER.id,
+      username: DEMO_USER.username,
+      email: DEMO_USER.email
+    }));
 
-    const handleChange = (e) => {
-        setFormData({
-            ...formData,
-            [e.target.name]: e.target.value
-        });
-    };
+    // Set profile data
+    dispatch(setProfileData({
+      username: DEMO_USER.username,
+      email: DEMO_USER.email,
+      joinDate: DEMO_USER.joinDate,
+      tradingHistory: DEMO_USER.tradingHistory
+    }));
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError('');
-        
-        try {
-            const response = await dispatch(loginUser(formData.username, formData.password));
-            
-            if (response && (response.username || response.name)) {
-                navigate(from, { replace: true });
-            } else {
-                setError('Invalid response from server');
-            }
-        } catch (err) {
-            console.error('Login error:', err);
-            setError(err.response?.data?.message || 'Invalid username or password');
-        }
-    };
+    // Set portfolio data
+    dispatch(setPortfolioData({
+      stocks: DEMO_USER.portfolio.stocks,
+      totalValue: DEMO_USER.portfolio.totalValue,
+      dailyGainLoss: DEMO_USER.portfolio.dailyGainLoss
+    }));
 
-    return (
-        <div className="card" style={{ maxWidth: '400px', margin: '2rem auto' }}>
-            <h1>Login to Stock Market</h1>
-            {error && <div className="error-message">{error}</div>}
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label className="form-label">Username</label>
-                    <input 
-                        type="text" 
-                        name="username"
-                        className="form-input" 
-                        placeholder="Enter your username"
-                        value={formData.username}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <div className="form-group">
-                    <label className="form-label">Password</label>
-                    <input 
-                        type="password" 
-                        name="password"
-                        className="form-input" 
-                        placeholder="Enter your password"
-                        value={formData.password}
-                        onChange={handleChange}
-                        required
-                    />
-                </div>
-                <button type="submit" className="btn btn-register" style={{ width: '100%' }}>
-                    Login
-                </button>
-            </form>
-            <div style={{ textAlign: 'center', marginTop: '10px' }}>
-                <a href="/forgot-password" className="forgot-password-link">Forgot Password?</a>
-            </div>
-        </div>
-    );
+    // Set watchlist data
+    dispatch(setWatchlistData(DEMO_USER.watchlist));
+
+    navigate('/portfolio');
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setError('Regular login is disabled in demo mode. Please use the demo login.');
+  };
+
+  return (
+    <div className="login-container">
+      <div className="login-box">
+        <h2>Welcome Back</h2>
+        <form onSubmit={handleSubmit} className="login-form">
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
+              disabled={loading}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Enter your password"
+              disabled={loading}
+            />
+          </div>
+          {error && <div className="error-message">{error}</div>}
+          <button 
+            type="submit" 
+            className="login-button"
+            disabled={loading}
+          >
+            {loading ? 'Logging in...' : 'Login'}
+          </button>
+          <button 
+            type="button" 
+            className="demo-login-button"
+            onClick={handleDemoLogin}
+            disabled={loading}
+          >
+            Try Demo Account
+          </button>
+        </form>
+      </div>
+    </div>
+  );
 }
 
 export default Login;

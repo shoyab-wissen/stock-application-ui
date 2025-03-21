@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './Watchlist.css';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 function Watchlist() {
   const [watchlistData, setWatchlistData] = useState([]);
@@ -8,11 +9,25 @@ function Watchlist() {
     getWatchlist();
   }, []);
   function getWatchlist() {
-    axios.get('http://localhost:8081/api/portfolio/2/watchlist')
+    axios.get('http://localhost:9999/portfolio/api/portfolio/1/watchlist')
     .then(
       (response) => {
         console.log(response.data.data);
-        setWatchlistData(response.data.data);
+        if (response.data.data != null) {
+          setWatchlistData(response.data.data);
+        }
+        else{
+          setWatchlistData([]);
+        }
+      }
+    )
+  }
+  function deleteWatchlistItem(id) {
+    axios.delete('http://localhost:8081/api/portfolio/1/watchlist/' + id)
+    .then(
+      (response) => {
+        console.log(response.data.data);
+        getWatchlist();
       }
     )
   }
@@ -20,7 +35,8 @@ function Watchlist() {
     <div className="watchlist">
       <div className="watchlist-header">
         <h1>My Watchlist</h1>
-        <button className="add-stock-btn">+ Add Stock</button>
+        
+        <button className="add-stock-btn"><Link to="/stocks" className="nav-link">+ Add Stocks</Link></button>
       </div>
 
       <div className="watchlist-grid">
@@ -56,7 +72,7 @@ function Watchlist() {
               </div>
               <div className="card-actions">
                 <button className="action-btn buy">Buy</button>
-                <button className="action-btn remove">Remove</button>
+                <button className="action-btn remove" onClick={() => deleteWatchlistItem(stock.id)}>Remove</button>
               </div>
             </div>
           );
