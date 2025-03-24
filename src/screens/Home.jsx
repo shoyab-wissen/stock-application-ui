@@ -1,32 +1,39 @@
+import React from 'react';
 import './Home.css';
+import { Link } from 'react-router-dom';
 
 function Home() {
     return (
-        <div>
+    <div className="home">
             <section className="hero">
-                <h1>Welcome to Stock Market App</h1>
-                <p className="subtitle">Invest, Trade, and Grow Your Wealth</p>
-                <div className="hero-buttons">
-                    <a href="/register" className="btn btn-register">Create Account</a>
-                    <a href="/stocks" className="btn btn-login">View Stocks</a>
+        <div className="hero-content">
+          <h1>Trade Smarter, Not Harder</h1>
+          <p>Your all-in-one platform for stock trading and market analysis</p>
+          <Link to="/login">
+            <button className="cta-button">Get Started</button>
+          </Link>
                 </div>
             </section>
 
             <section className="features">
-                <h2>Why Choose Us?</h2>
+        <h2>Why Choose Us</h2>
                 <div className="feature-grid">
-                    {[
-                        { title: 'Portfolio Management', icon: '📈', desc: 'Track and manage your investments' },
-                        { title: 'Live Trading', icon: '💹', desc: 'Buy and sell stocks in real-time' },
-                        { title: 'Market Analysis', icon: '📊', desc: 'Get insights and trends on stocks' },
-                        { title: 'Secure Transactions', icon: '🔒', desc: 'Trade with confidence and safety' }
-                    ].map((feature, index) => (
-                        <div key={index} className="feature-card">
-                            <div className="feature-icon">{feature.icon}</div>
-                            <h3>{feature.title}</h3>
-                            <p>{feature.desc}</p>
+          <div className="feature-card">
+            <h3>Real-Time Data</h3>
+            <p>Get instant access to market data and stock prices</p>
                         </div>
-                    ))}
+          <div className="feature-card">
+            <h3>Advanced Analytics</h3>
+            <p>Powerful tools for technical and fundamental analysis</p>
+          </div>
+          <div className="feature-card">
+            <h3>Portfolio Tracking</h3>
+            <p>Monitor your investments in one place</p>
+          </div>
+          <div className="feature-card">
+            <h3>Market Insights</h3>
+            <p>Expert analysis and market news at your fingertips</p>
+          </div>
                 </div>
             </section>
         </div>
