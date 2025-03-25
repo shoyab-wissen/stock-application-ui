@@ -1,32 +1,31 @@
-.login-container {
+.register-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: calc(100vh - 64px);
-    background-color: #f3f4f6;
-    padding: 1rem;
+    min-height: 100vh;
+    padding: 20px;
+    background-color: #f5f5f5;
 }
 
-.login-card {
-    background-color: white;
+.register-card {
+    background: white;
     padding: 2rem;
     border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 400px;
+    max-width: 500px;
 }
 
-.login-card h2 {
+.register-card h2 {
     text-align: center;
-    color: #1f2937;
+    color: #333;
     margin-bottom: 1.5rem;
-    font-size: 1.5rem;
 }
 
-.login-form {
+.register-form {
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .form-group {
@@ -36,57 +35,54 @@
 }
 
 .form-group label {
-    color: #4b5563;
-    font-size: 0.875rem;
     font-weight: 500;
+    color: #555;
 }
 
 .form-group input {
     padding: 0.75rem;
-    border: 1px solid #d1d5db;
+    border: 1px solid #ddd;
     border-radius: 4px;
     font-size: 1rem;
     transition: border-color 0.2s;
 }
 
 .form-group input:focus {
-    outline: none;
     border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    outline: none;
 }
 
-.login-button {
+.error-message {
+    background-color: #fee2e2;
+    color: #dc2626;
+    padding: 0.75rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+.register-button {
     background-color: #2563eb;
     color: white;
     padding: 0.75rem;
     border: none;
     border-radius: 4px;
     font-size: 1rem;
-    font-weight: 500;
     cursor: pointer;
     transition: background-color 0.2s;
+    margin-top: 1rem;
 }
 
-.login-button:hover {
+.register-button:hover {
     background-color: #1d4ed8;
 }
 
-.login-button:disabled {
+.register-button:disabled {
     background-color: #93c5fd;
     cursor: not-allowed;
 }
 
-.error-message {
-    background-color: #fee2e2;
-    border: 1px solid #ef4444;
-    color: #b91c1c;
-    padding: 0.75rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-    font-size: 0.875rem;
-}
-
-.register-link {
+.login-link {
     text-align: center;
     margin-top: 1.5rem;
     padding: 1rem;
@@ -94,13 +90,19 @@
     color: #666;
 }
 
-.register-link a {
+.login-link a {
     color: #2563eb;
     text-decoration: none;
     font-weight: 500;
     margin-left: 0.5rem;
 }
 
-.register-link a:hover {
+.login-link a:hover {
     text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+    .register-card {
+        padding: 1.5rem;
+    }
 }

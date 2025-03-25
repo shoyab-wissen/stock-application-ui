@@ -1,84 +1,181 @@
-/* ... (previous CSS remains the same) ... */
+/* Add these new styles at the top of your existing CSS file */
+.stocks-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
 
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+.stocks-header {
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
-  z-index: 1000;
+  margin-bottom: 20px;
 }
 
-.modal {
-  background-color: white;
-  border-radius: 8px;
-  padding: 24px;
-  width: 400px;
-  max-width: 90%;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.modal h2 {
-  margin: 0 0 20px 0;
-  color: #333;
-}
-
-.modal-content {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.stock-info {
-  background-color: #f8f9fa;
-  padding: 12px;
+.view-watchlist-btn {
+  padding: 8px 16px;
+  background-color: #4CAF50;
+  color: white;
+  text-decoration: none;
   border-radius: 4px;
-}
-
-.stock-info p {
-  margin: 8px 0;
-  color: #666;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.form-group label {
   font-weight: 500;
-  color: #666;
 }
 
-.form-group input {
-  padding: 8px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 16px;
+.view-watchlist-btn:hover {
+  background-color: #45a049;
 }
 
-.modal-actions {
-  display: flex;
-  gap: 12px;
+.login-banner {
+  background-color: #e8f0fe;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.login-banner .login-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-banner .login-link:hover {
+  text-decoration: underline;
+}
+
+/* Your existing styles remain the same */
+.stocks-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
   margin-top: 20px;
 }
 
-.action-btn.cancel {
-  background-color: #ef4444;
+.stock-card {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+}
+
+.stock-card:hover {
+  transform: translateY(-2px);
+}
+
+.stock-header {
+  margin-bottom: 15px;
+}
+
+.stock-header h3 {
+  margin: 0;
+  color: #333;
+}
+
+.stock-symbol {
+  color: #666;
+  font-size: 0.9em;
+}
+
+.stock-price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.current-price {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #333;
+}
+
+.price-change {
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.9em;
+}
+
+.price-change.positive {
+  background-color: #e6f4ea;
+  color: #137333;
+}
+
+.price-change.negative {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.stock-details {
+  margin-bottom: 20px;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  color: #666;
+}
+
+.stock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.watchlist-btn, .buy-btn {
+  padding: 10px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.watchlist-btn.add {
+  background-color: #e8f0fe;
+  color: #1a73e8;
+}
+
+.watchlist-btn.remove {
+  background-color: #fce8e6;
+  color: #c5221f;
+}
+
+.buy-btn {
+  background-color: #1a73e8;
   color: white;
 }
 
-.action-btn.cancel:hover {
-  background-color: #dc2626;
+.watchlist-btn:hover, .buy-btn:hover {
+  opacity: 0.9;
 }
 
-.error-message {
-  color: #ef4444;
-  font-size: 14px;
-  margin-top: 8px;
+.login-prompt {
+  text-align: center;
+  padding: 15px;
+  background-color: #f8f9fa;
+  border-radius: 6px;
+}
+
+.login-link {
+  color: #1a73e8;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.login-link:hover {
+  text-decoration: underline;
+}
+
+.loader {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+}
+
+.error {
+  color: #c5221f;
+  text-align: center;
+  padding: 20px;
 }

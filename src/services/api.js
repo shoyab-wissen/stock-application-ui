@@ -11,9 +11,10 @@ export const watchlistApi = {
   getWatchlist: async (userId) => {
     try {
       const response = await api.get(`/portfolio/${userId}/watchlist`);
-      return response.data.data;
+      return response.data.data || []; // Return empty array if data is null
     } catch (error) {
-      throw error.response?.data?.message || error.message || 'Failed to fetch watchlist';
+      console.error('Watchlist fetch error:', error);
+      return []; // Return empty array on error
     }
   },
 

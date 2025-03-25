@@ -1,14 +1,20 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import { logoutUser } from '../redux/user/UserAction';
 
 function Header() {
     const location = useLocation();
+    const navigate = useNavigate();
     const dispatch = useDispatch();
     const user = useSelector(state => state.user);
     
-    const handleLogout = () => {
-        dispatch(logoutUser());
+    const handleLogout = async () => {
+        try {
+            await dispatch(logoutUser());
+            navigate('/login');
+        } catch (error) {
+            console.error('Logout failed:', error);
+        }
     };
     
     return (

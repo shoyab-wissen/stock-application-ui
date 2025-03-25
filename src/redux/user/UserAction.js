@@ -1,6 +1,6 @@
 import axios from "axios";
-import { BASE_URL, LOGIN, REGISTER, GETUSER, VERIFY_USER, RESET_PASSWORD } from "../../utils/constants";
-import { login, logout, register, VERIFY_USER_FOR_RESET, RESET_USER_PASSWORD } from "./UserTypes";
+import { BASE_URL, LOGIN, REGISTER, GETUSER } from "../../utils/constants";
+import { login, logout, register } from "./UserTypes";
 
 export const loginUser = (accountNumber, password) => async (dispatch) => {
     try {
@@ -25,9 +25,22 @@ export const loginUser = (accountNumber, password) => async (dispatch) => {
     }
 };
 
-export const logoutUser = () => ({
-    type: logout
-});
+export const logoutUser = () => async (dispatch) => {
+    try {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (user && user.email) {
+            await axios.post(`${BASE_URL}/api/auth/logout`, null, {
+                params: { email: user.email }
+            });
+        }
+        localStorage.removeItem('user');
+        dispatch({ type: logout });
+    } catch (error) {
+        console.error('Logout error:', error);
+        // Still dispatch logout even if the server call fails
+        dispatch({ type: logout });
+    }
+};
 
 export const registerUser = (name, email, dob, password) => async (dispatch) => {
     try {
