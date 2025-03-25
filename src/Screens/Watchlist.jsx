@@ -75,11 +75,11 @@ function Watchlist() {
   return (
     <div className="watchlist">
       <div className="watchlist-header">
-        <h1>My Watchlist</h1>
-        <button className="add-stock-btn">
-          <Link to="/stocks" className="nav-link">+ Add Stocks</Link>
-        </button>
-      </div>
+              <h2>Your Watchlist</h2>
+                <Link to="/stocks" className="add-stock-btn">
+                  Add Stocks 
+                </Link>
+            </div>
 
       {/* Message Display */}
       {error && <div className="error-message">{error}</div>}

@@ -122,3 +122,22 @@ export const resetPassword = (username, newPassword) => async (dispatch) => {
         return { success: false, message: 'Error resetting password' };
     }
 };
+
+export const getUserById = (id) => async (dispatch) => {
+    try {
+        const response = await axios.get(`${BASE_URL}/api/auth/users/${id}`);
+        
+        if (response.data) {
+            dispatch({
+                type: login,
+                payload: response.data
+            });
+            return response.data;
+        } else {
+            throw new Error('User not found');
+        }
+    } catch (error) {
+        console.error('Get user error:', error);
+        throw error;
+    }
+};

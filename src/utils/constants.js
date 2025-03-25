@@ -1,5 +1,5 @@
-export const BASE_URL = 'http://localhost:9999/registration'; // Updated to include registration service
-
+export const BASE_URL = 'http://localhost:8082'; // Registration service port
+export const GET_USER_BY_ID = '/api/auth/users';
 export const LOGIN = '/api/auth/login';
 export const REGISTER = '/api/auth/register';
 export const LOGOUT = '/api/auth/logout';

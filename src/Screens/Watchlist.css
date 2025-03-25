@@ -27,10 +27,9 @@
   padding: 8px 16px;
   background-color: #4CAF50;
   color: white;
-  border: none;
+  text-decoration: none;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
+  font-weight: 500;
 }
 
 .add-stock-btn:disabled {

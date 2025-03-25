@@ -13,8 +13,9 @@ function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  const [selectedHolding, setSelectedHolding] = useState(null);
-  const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  // Remove these lines:
+  // const [selectedHolding, setSelectedHolding] = useState(null);
+  // const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
 
   const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
@@ -67,21 +68,7 @@ function Portfolio() {
     }
   };
 
-  const handleUpdateStock = async (stockId, quantity, buyPrice) => {
-    try {
-      const response = await axios.put(
-        `http://localhost:9999/portfolio/api/portfolio/${user.id}/stocks/${stockId}`,
-        { quantity, buyPrice }
-      );
-      
-      setSuccessMessage('Stock updated successfully');
-      await fetchAllData();
-      setIsUpdateModalOpen(false);
-      setSelectedHolding(null);
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to update stock');
-    }
-  };
+  // Remove the handleUpdateStock function
 
   const handleRemoveFromWatchlist = async (stockId) => {
     try {
@@ -94,45 +81,7 @@ function Portfolio() {
     }
   };
 
-  const UpdateStockModal = ({ holding, onClose, onUpdate }) => (
-    <div className="modal-overlay">
-      <div className="modal-content">
-        <h3>Update {holding.stock.name}</h3>
-        <form onSubmit={(e) => {
-          e.preventDefault();
-          const quantity = parseInt(e.target.quantity.value);
-          const buyPrice = parseFloat(e.target.buyPrice.value);
-          onUpdate(holding.stock.id, quantity, buyPrice);
-        }}>
-          <div className="form-group">
-            <label>Quantity:</label>
-            <input
-              type="number"
-              name="quantity"
-              defaultValue={holding.quantity}
-              min="1"
-              required
-            />
-          </div>
-          <div className="form-group">
-            <label>Buy Price:</label>
-            <input
-              type="number"
-              name="buyPrice"
-              defaultValue={holding.averageBuyPrice}
-              step="0.01"
-              min="0.01"
-              required
-            />
-          </div>
-          <div className="modal-actions">
-            <button type="submit" className="btn-primary">Update</button>
-            <button type="button" className="btn-secondary" onClick={onClose}>Cancel</button>
-          </div>
-        </form>
-      </div>
-    </div>
-  );
+  // Remove the UpdateStockModal component
 
   if (!user || !user.id) {
     return (
@@ -256,15 +205,7 @@ function Portfolio() {
                   </div>
                 </div>
                 <div className="holding-actions">
-                  <button 
-                    className="update-btn"
-                    onClick={() => {
-                      setSelectedHolding(holding);
-                      setIsUpdateModalOpen(true);
-                    }}
-                  >
-                    Update
-                  </button>
+                  {/* Remove the update button, keep other actions if needed */}
                 </div>
               </div>
             ))}
@@ -329,16 +270,7 @@ function Portfolio() {
         )}
       </div>
 
-      {isUpdateModalOpen && selectedHolding && (
-        <UpdateStockModal
-          holding={selectedHolding}
-          onClose={() => {
-            setIsUpdateModalOpen(false);
-            setSelectedHolding(null);
-          }}
-          onUpdate={handleUpdateStock}
-        />
-      )}
+      {/* Remove the UpdateStockModal component */}
     </div>
   );
 }
