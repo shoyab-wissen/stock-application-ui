@@ -1,103 +1,111 @@
-import React, { useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { loginSuccess } from '../store/slices/authSlice';
-import { setProfileData } from '../store/slices/profileSlice';
-import { setPortfolioData } from '../store/slices/portfolioSlice';
-import { setWatchlistData } from '../store/slices/watchlistSlice';
-import { DEMO_USER } from '../constants/demoUser';
+import { useState } from 'react';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import { useUser } from '../context/UserContext';
+import axios from 'axios';
 import './Login.css';
 
 function Login() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
-  
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const { loading } = useSelector(state => state.auth);
+    const [formData, setFormData] = useState({
+        email: '',
+        password: ''
+    });
+    const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
 
-  const handleDemoLogin = () => {
-    // Simulate loading
-    dispatch(loginSuccess({
-      id: DEMO_USER.id,
-      username: DEMO_USER.username,
-      email: DEMO_USER.email
-    }));
+    const { login } = useUser();
+    const navigate = useNavigate();
+    const location = useLocation();
 
-    // Set profile data
-    dispatch(setProfileData({
-      username: DEMO_USER.username,
-      email: DEMO_USER.email,
-      joinDate: DEMO_USER.joinDate,
-      tradingHistory: DEMO_USER.tradingHistory
-    }));
+    const from = location.state?.from?.pathname || "/portfolio";
 
-    // Set portfolio data
-    dispatch(setPortfolioData({
-      stocks: DEMO_USER.portfolio.stocks,
-      totalValue: DEMO_USER.portfolio.totalValue,
-      dailyGainLoss: DEMO_USER.portfolio.dailyGainLoss
-    }));
+    const handleChange = (e) => {
+        setFormData({
+            ...formData,
+            [e.target.name]: e.target.value
+        });
+    };
 
-    // Set watchlist data
-    dispatch(setWatchlistData(DEMO_USER.watchlist));
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setError('');
+        setLoading(true);
 
-    navigate('/portfolio');
-  };
+        try {
+            const response = await axios.post(`http://localhost:8082/api/auth/login`, {
+                email: formData.email,
+                password: formData.password
+            }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            console.log(response.data);
+            
+            if (response.data.success) {
+                // Store the user data in context
+                login(response.data.data);
+                navigate(from);
+            } else {
+                setError(response.data.message || 'Login failed');
+            }
+        } catch (err) {
+            console.error('Login error:', err);
+            setError(err.response?.data?.message || 'Invalid credentials');
+        } finally {
+            setLoading(false);
+        }
+    };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    setError('Regular login is disabled in demo mode. Please use the demo login.');
-  };
+    return (
+        <div className="login-container">
+            <div className="login-card">
+                <h2>Welcome Back</h2>
+                {error && <div className="error-message">{error}</div>}
+                
+                <form onSubmit={handleSubmit} className="login-form">
+                    <div className="form-group">
+                        <label htmlFor="email">Email</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            placeholder="Enter your email"
+                            required
+                            disabled={loading}
+                        />
+                    </div>
 
-  return (
-    <div className="login-container">
-      <div className="login-box">
-        <h2>Welcome Back</h2>
-        <form onSubmit={handleSubmit} className="login-form">
-          <div className="form-group">
-            <label htmlFor="email">Email</label>
-            <input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter your email"
-              disabled={loading}
-            />
-          </div>
-          <div className="form-group">
-            <label htmlFor="password">Password</label>
-            <input
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter your password"
-              disabled={loading}
-            />
-          </div>
-          {error && <div className="error-message">{error}</div>}
-          <button 
-            type="submit" 
-            className="login-button"
-            disabled={loading}
-          >
-            {loading ? 'Logging in...' : 'Login'}
-          </button>
-          <button 
-            type="button" 
-            className="demo-login-button"
-            onClick={handleDemoLogin}
-            disabled={loading}
-          >
-            Try Demo Account
-          </button>
-        </form>
-      </div>
-    </div>
-  );
+                    <div className="form-group">
+                        <label htmlFor="password">Password</label>
+                        <input
+                            type="password"
+                            id="password"
+                            name="password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            placeholder="Enter your password"
+                            required
+                            disabled={loading}
+                        />
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={loading}
+                    >
+                        {loading ? 'Logging in...' : 'Login'}
+                    </button>
+                </form>
+
+                <div className="register-link">
+                    Don't have an account? <Link to="/register">Register here</Link>
+                </div>
+            </div>
+        </div>
+    );
 }
 
 export default Login;

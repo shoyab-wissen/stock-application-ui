@@ -1,22 +1,19 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
-import { logout } from '../store/slices/authSlice';
+import { useUser } from '../context/UserContext';
 import './Navbar.css';
 
 function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const navigate = useNavigate();
-  const dispatch = useDispatch();
+  const { user, isAuthenticated, logout } = useUser();
   
-  const { user, isAuthenticated } = useSelector((state) => state.auth);
-
   const toggleDropdown = () => {
     setIsDropdownOpen(!isDropdownOpen);
   };
 
   const handleLogout = () => {
-    dispatch(logout());
+    logout();
     setIsDropdownOpen(false);
     navigate('/login');
   };

@@ -1,8 +1,8 @@
-export const BASE_URL = 'http://localhost:8081';
-
-export const LOGIN = '/api/login';
-export const REGISTER = '/api/register';
-export const LOGOUT = '/api/logout';
+export const BASE_URL = 'http://localhost:8082'; // Registration service port
+export const GET_USER_BY_ID = '/api/auth/users';
+export const LOGIN = '/api/auth/login';
+export const REGISTER = '/api/auth/register';
+export const LOGOUT = '/api/auth/logout';
 export const DEPOSIT = '/api/transaction/deposit';
 export const WITHDRAW = '/api/transaction/withdraw';
 export const TRANSFER = '/api/transaction/transfer';
