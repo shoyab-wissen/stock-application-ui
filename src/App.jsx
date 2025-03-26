@@ -8,6 +8,7 @@ import Portfolio from './Screens/Portfolio';
 import Watchlist from './Screens/Watchlist';
 import Profile from './Screens/Profile';
 import Stocks from './Screens/Stocks';
+import StockDetail from './Screens/StockDetail';
 import ProtectedRoute from './Components/ProtectedRoute';
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/stocks" element={<Stocks />} />
+        <Route path="/stocks/:stockId" element={<StockDetail />} />
         <Route
           path="/portfolio"
           element={

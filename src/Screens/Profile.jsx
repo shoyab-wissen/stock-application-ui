@@ -14,8 +14,12 @@ function Profile() {
     useEffect(() => {
         const fetchUserData = async () => {
             try {
+                // console.log(user.id);
+                
                 const response = await axios.get(`http://localhost:9999/registration/api/auth/users/${user.id}`);
                 setUserData(response.data);
+                console.log(response.data);
+                
             } catch (err) {
                 setError('Failed to fetch user data');
                 console.error('Error:', err);

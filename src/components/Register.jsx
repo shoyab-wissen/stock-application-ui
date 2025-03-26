@@ -7,11 +7,9 @@ function Register() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: '',
-        confirmPassword: '', // for validation only
+        password: '', // for validation only
         panCard: '',
-        dateOfBirth: '',
-        accountNumber: ''
+        dateOfBirth: ''
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -58,15 +56,6 @@ function Register() {
             setError('Date of Birth is required');
             return false;
         }
-        if (!formData.accountNumber.trim()) {
-            setError('Account Number is required');
-            return false;
-        }
-        if (!/^\d{6}$/.test(formData.accountNumber)) {
-            setError('Account Number must be 6 digits');
-            return false;
-        }
-
         return true;
     };
 
@@ -86,7 +75,6 @@ function Register() {
                 email: formData.email,
                 password: formData.password,
                 isActive: true,
-                accountNumber: parseInt(formData.accountNumber),
                 balance: 10000,
                 transactionCount: 0,
                 panCard: formData.panCard,
@@ -136,22 +124,6 @@ function Register() {
                             value={formData.email}
                             onChange={handleChange}
                             placeholder="Enter your email"
-                            disabled={loading}
-                            required
-                        />
-                    </div>
-
-                    <div className="form-group">
-                        <label htmlFor="accountNumber">Account Number (6 digits)</label>
-                        <input
-                            type="text"
-                            id="accountNumber"
-                            name="accountNumber"
-                            value={formData.accountNumber}
-                            onChange={handleChange}
-                            placeholder="Enter 6-digit account number"
-                            pattern="\d{6}"
-                            maxLength="6"
                             disabled={loading}
                             required
                         />
