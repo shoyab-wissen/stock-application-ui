@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import './Stocks.css';
 
@@ -10,6 +10,7 @@ function Stocks() {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
   const { user, isAuthenticated } = useUser();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchData();
@@ -30,7 +31,6 @@ function Stocks() {
     try {
       setLoading(true);
       const stocksResponse = await axios.get('http://localhost:9999/trading/api/stocks');
-      console.log(stocksResponse.data.data);
       setStocks(stocksResponse.data.data);
     } catch (err) {
       setError('Failed to fetch data');
@@ -66,6 +66,10 @@ function Stocks() {
     }
   };
 
+  const handleStockClick = (stockId) => {
+    navigate(`/stocks/${stockId}`);
+  };
+
   if (loading) return <div className="loader">Loading...</div>;
 
   return (
@@ -93,7 +97,11 @@ function Stocks() {
 
       <div className="stocks-grid">
         {stocks.map(stock => (
-          <div key={stock.id} className="stock-card">
+          <div 
+            key={stock.id} 
+            className="stock-card"
+            onClick={() => handleStockClick(stock.symbol)}
+          >
             <div className="stock-header">
               <h3>{stock.name}</h3>
               <span className="stock-symbol">{stock.symbol}</span>
