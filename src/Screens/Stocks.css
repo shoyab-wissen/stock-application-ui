@@ -14,7 +14,7 @@
 
 .view-watchlist-btn {
   padding: 8px 16px;
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   text-decoration: none;
   border-radius: 4px;
@@ -88,6 +88,11 @@
   font-size: 1.5em;
   font-weight: bold;
   color: #333;
+  transition: color 0.3s ease;
+}
+
+.current-price.flash {
+  color: #1a73e8;
 }
 
 .price-change {
@@ -104,6 +109,13 @@
 .price-change.negative {
   background-color: #fce8e6;
   color: #c5221f;
+}
+
+.update-time {
+  display: block;
+  font-size: 0.8em;
+  color: #666;
+  margin-top: 4px;
 }
 
 .stock-details {
@@ -123,7 +135,8 @@
   gap: 10px;
 }
 
-.watchlist-btn, .buy-btn {
+.watchlist-btn,
+.buy-btn {
   padding: 10px;
   border: none;
   border-radius: 6px;
@@ -147,7 +160,8 @@
   color: white;
 }
 
-.watchlist-btn:hover, .buy-btn:hover {
+.watchlist-btn:hover,
+.buy-btn:hover {
   opacity: 0.9;
 }
 

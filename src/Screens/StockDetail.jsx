@@ -12,7 +12,7 @@ function StockDetail() {
   const chartRef = useRef(null);
 
   useEffect(() => {
-    const fetchStockData = async () => {
+    const fetchStockData = async () => { 
       try {
         const stockResponse = await axios.get(`http://localhost:8083/api/stocks/search?query=${stockId}`);
         if (stockResponse.data.data && stockResponse.data.data.length > 0) {
@@ -26,6 +26,7 @@ function StockDetail() {
       } catch (err) {
         setError('Failed to fetch stock data');
         console.error(err);
+        console.log(err);
       } finally {
         setLoading(false);
       }
