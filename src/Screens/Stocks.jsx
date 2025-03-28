@@ -11,6 +11,11 @@ function Stocks() {
   const [successMessage, setSuccessMessage] = useState(null);
   const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [buyError, setBuyError] = useState(null);
+  const [buyLoading, setBuyLoading] = useState(false);
 
   useEffect(() => {
     fetchData();
@@ -68,6 +73,46 @@ function Stocks() {
 
   const handleStockClick = (stockId) => {
     navigate(`/stocks/${stockId}`);
+  };
+
+  const handleBuyClick = (e, stock) => {
+    e.stopPropagation(); // Prevent navigation to stock detail
+    if (!isAuthenticated) {
+      setError('Please login to buy stocks');
+      return;
+    }
+    setSelectedStock(stock);
+    setShowBuyModal(true);
+    setBuyError(null);
+  };
+
+  const handleBuySubmit = async () => {
+    setBuyError(null);
+    setBuyLoading(true);
+
+    try {
+      const postData = {
+        userId: user.id,
+        stockSymbol: selectedStock.symbol,
+        quantity: parseInt(quantity),
+        price: selectedStock.price,
+        tradeType: 'BUY'
+      };
+      console.log('Buying stock:', postData );
+      const response = await axios.post('http://localhost:8083/api/trade/buy', postData);
+      if (response.data) {
+        setSuccessMessage(`Successfully bought ${quantity} shares of ${selectedStock.symbol}`);
+        setShowBuyModal(false);
+        setQuantity(1);
+        // Refresh stock data
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Buy stock error:', err);
+      setBuyError(err.response?.data?.message || 'Failed to complete purchase');
+    } finally {
+      setBuyLoading(false);
+    }
   };
 
   if (loading) return <div className="loader">Loading...</div>;
@@ -133,11 +178,14 @@ function Stocks() {
               <div className="stock-actions">
                 <button 
                   className="watchlist-btn"
-                  onClick={() => handleAddToWatchlist(stock.id)}
+                  onClick={(e) => handleAddToWatchlist(stock.id)}
                 >
                   Add to Watchlist
                 </button>
-                <button className="buy-btn">
+                <button 
+                  className="buy-btn"
+                  onClick={(e) => handleBuyClick(e, stock)}
+                >
                   Buy
                 </button>
               </div>
@@ -145,6 +193,47 @@ function Stocks() {
           </div>
         ))}
       </div>
+
+      {/* Buy Modal */}
+      {showBuyModal && selectedStock && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Buy {selectedStock.symbol}</h3>
+            <div className="modal-content">
+              <div className="price-info">
+                <p>Current Price: ${selectedStock.price.toFixed(2)}</p>
+                <p>Total Cost: ${(selectedStock.price * quantity).toFixed(2)}</p>
+              </div>
+              <div className="quantity-input">
+                <label htmlFor="quantity">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                />
+              </div>
+              {buyError && <div className="error-message">{buyError}</div>}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={() => setShowBuyModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="confirm-btn"
+                  onClick={handleBuySubmit}
+                  disabled={buyLoading}
+                >
+                  {buyLoading ? 'Processing...' : 'Confirm Purchase'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

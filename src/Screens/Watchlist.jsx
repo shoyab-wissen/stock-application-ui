@@ -3,6 +3,7 @@ import './Watchlist.css';
 import { Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { watchlistApi } from '../services/api';
+import axios from 'axios';
 
 function Watchlist() {
   const [watchlistData, setWatchlistData] = useState([]);
@@ -11,13 +12,19 @@ function Watchlist() {
   const [successMessage, setSuccessMessage] = useState(null);
   const { user, isAuthenticated } = useUser();
 
+  // Buy Modal States
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [quantity, setQuantity] = useState(1);
+  const [buyError, setBuyError] = useState(null);
+  const [buyLoading, setBuyLoading] = useState(false);
+
   useEffect(() => {
     if (isAuthenticated && user?.id) {
       getWatchlist();
     }
   }, [user, isAuthenticated]);
 
-  // Clear messages after 3 seconds
   useEffect(() => {
     if (error || successMessage) {
       const timer = setTimeout(() => {
@@ -58,6 +65,43 @@ function Watchlist() {
     }
   }
 
+  const handleBuyClick = (stock) => {
+    setSelectedStock(stock);
+    setShowBuyModal(true);
+    setBuyError(null);
+    setQuantity(1);
+  };
+
+  const handleBuySubmit = async () => {
+    setBuyError(null);
+    setBuyLoading(true);
+
+    try {
+      const postData = {
+        userId: user.id,
+        stockSymbol: selectedStock.symbol,
+        quantity: parseInt(quantity),
+        price: selectedStock.price,
+        tradeType: 'BUY'
+      };
+
+      const response = await axios.post('http://localhost:8083/api/trade/buy', postData);
+      
+      if (response.data) {
+        setSuccessMessage(`Successfully bought ${quantity} shares of ${selectedStock.symbol}`);
+        setShowBuyModal(false);
+        setQuantity(1);
+        // Refresh watchlist data
+        getWatchlist();
+      }
+    } catch (err) {
+      console.error('Buy stock error:', err);
+      setBuyError(err.response?.data?.message || 'Failed to complete purchase');
+    } finally {
+      setBuyLoading(false);
+    }
+  };
+
   if (!isAuthenticated) {
     return (
       <div className="watchlist-unauthorized">
@@ -75,13 +119,12 @@ function Watchlist() {
   return (
     <div className="watchlist">
       <div className="watchlist-header">
-              <h2>Your Watchlist</h2>
-                <Link to="/stocks" className="add-stock-btn">
-                  Add Stocks 
-                </Link>
-            </div>
+        <h2>Your Watchlist</h2>
+        <Link to="/stocks" className="add-stock-btn">
+          Add Stocks 
+        </Link>
+      </div>
 
-      {/* Message Display */}
       {error && <div className="error-message">{error}</div>}
       {successMessage && <div className="success-message">{successMessage}</div>}
 
@@ -123,7 +166,12 @@ function Watchlist() {
                   </p>
                 </div>
                 <div className="card-actions">
-                  <button className="action-btn buy">Buy</button>
+                  <button 
+                    className="action-btn buy"
+                    onClick={() => handleBuyClick(stock)}
+                  >
+                    Buy
+                  </button>
                   <button 
                     className="action-btn remove" 
                     onClick={() => deleteWatchlistItem(stock.id)}
@@ -134,6 +182,47 @@ function Watchlist() {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {/* Buy Modal */}
+      {showBuyModal && selectedStock && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Buy {selectedStock.symbol}</h3>
+            <div className="modal-content">
+              <div className="price-info">
+                <p>Current Price: ${selectedStock.price.toFixed(2)}</p>
+                <p>Total Cost: ${(selectedStock.price * quantity).toFixed(2)}</p>
+              </div>
+              <div className="quantity-input">
+                <label htmlFor="quantity">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                />
+              </div>
+              {buyError && <div className="error-message">{buyError}</div>}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={() => setShowBuyModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="confirm-btn"
+                  onClick={handleBuySubmit}
+                  disabled={buyLoading}
+                >
+                  {buyLoading ? 'Processing...' : 'Confirm Purchase'}
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

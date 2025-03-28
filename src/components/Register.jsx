@@ -7,12 +7,14 @@ function Register() {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: '', // for validation only
+        password: '',
+        confirmPassword: '',
         panCard: '',
-        dateOfBirth: ''
+        dateOfBirth: '',
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState('');
     
     const navigate = useNavigate();
 
@@ -70,25 +72,44 @@ function Register() {
         try {
             setLoading(true);
             
+            // Format date to match backend expected format (YYYY-MM-DD)
+            const formattedDate = new Date(formData.dateOfBirth).toISOString().split('T')[0];
+            
             const userData = {
                 name: formData.name,
                 email: formData.email,
                 password: formData.password,
+                panCard: formData.panCard.toUpperCase(), // Ensure PAN is uppercase
+                dateOfBirth: formattedDate,
                 isActive: true,
-                balance: 10000,
-                transactionCount: 0,
-                panCard: formData.panCard,
-                dateOfBirth: formData.dateOfBirth
+                balance: 10000.0,  // Set as number instead of string
+                transactionCount: 0
             };
-            console.log(userData);
+
+            console.log('Sending registration data:', userData);
             
-            const response = await axios.post('http://localhost:8082/api/auth/register', userData);
+            const response = await axios.post('http://localhost:8082/api/auth/register', userData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             
-            if (response.data) {
-                navigate('/login');
+            console.log('Registration response:', response);
+
+            if (response.status === 200) {
+                // Show success message before redirecting
+                setSuccessMessage('Registration successful! Redirecting to login...');
+                setTimeout(() => {
+                    navigate('/login');
+                }, 2000);
             }
         } catch (err) {
-            setError(err.response?.data?.message || 'Registration failed. Please try again.');
+            console.error('Registration error:', err);
+            if (err.response?.data) {
+                setError(err.response.data);
+            } else {
+                setError('Registration failed. Please try again.');
+            }
         } finally {
             setLoading(false);
         }
@@ -99,6 +120,7 @@ function Register() {
             <div className="register-card">
                 <h2>Create Your Trading Account</h2>
                 {error && <div className="error-message">{error}</div>}
+                {successMessage && <div className="success-message">{successMessage}</div>}
                 
                 <form onSubmit={handleSubmit} className="register-form">
                     <div className="form-group">

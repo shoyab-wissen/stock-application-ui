@@ -13,9 +13,16 @@ function Portfolio() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
-  // Remove these lines:
-  // const [selectedHolding, setSelectedHolding] = useState(null);
-  // const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
+  const [showTradeModal, setShowTradeModal] = useState(false);
+  const [selectedHolding, setSelectedHolding] = useState(null);
+  const [tradeType, setTradeType] = useState(null); // 'BUY' or 'SELL'
+  const [quantity, setQuantity] = useState(1);
+  const [tradeError, setTradeError] = useState(null);
+  const [tradeLoading, setTradeLoading] = useState(false);
+  const [showBuyModal, setShowBuyModal] = useState(false);
+  const [selectedStock, setSelectedStock] = useState(null);
+  const [buyError, setBuyError] = useState(null);
+  const [buyLoading, setBuyLoading] = useState(false);
 
   const { user, isAuthenticated } = useUser();
   const navigate = useNavigate();
@@ -68,8 +75,6 @@ function Portfolio() {
     }
   };
 
-  // Remove the handleUpdateStock function
-
   const handleRemoveFromWatchlist = async (stockId) => {
     try {
       await watchlistApi.removeFromWatchlist(user.id, stockId);
@@ -81,7 +86,83 @@ function Portfolio() {
     }
   };
 
-  // Remove the UpdateStockModal component
+  const handleTradeClick = (holding, type) => {
+    setSelectedHolding(holding);
+    setTradeType(type);
+    setQuantity(1);
+    setTradeError(null);
+    setShowTradeModal(true);
+  };
+
+  const handleTradeSubmit = async () => {
+    setTradeError(null);
+    setTradeLoading(true);
+
+    try {
+      const endpoint = `http://localhost:8083/api/trade/${tradeType.toLowerCase()}`;
+      const response = await axios.post(endpoint, {
+        userId: user.id,
+        stockSymbol: selectedHolding.stock.symbol,
+        quantity: parseInt(quantity),
+        price: selectedHolding.stock.price,
+        tradeType: tradeType
+      });
+
+      if (response.data) {
+        setSuccessMessage(`Successfully ${tradeType.toLowerCase()}ed ${quantity} shares of ${selectedHolding.stock.symbol}`);
+        setShowTradeModal(false);
+        setQuantity(1);
+        // Refresh portfolio data
+        fetchAllData();
+      }
+    } catch (err) {
+      console.error('Trade error:', err);
+      setTradeError(err.response?.data?.message || `Failed to ${tradeType.toLowerCase()} stock`);
+    } finally {
+      setTradeLoading(false);
+    }
+  };
+
+  const handleBuyClick = (stock) => {
+    if (!isAuthenticated) {
+      setError('Please login to buy stocks');
+      return;
+    }
+    setSelectedStock(stock);
+    setShowBuyModal(true);
+    setBuyError(null);
+    setQuantity(1);
+  };
+
+  const handleBuySubmit = async () => {
+    setBuyError(null);
+    setBuyLoading(true);
+
+    try {
+      const postData = {
+        userId: user.id,
+        stockSymbol: selectedStock.symbol,
+        quantity: parseInt(quantity),
+        price: selectedStock.price,
+        tradeType: 'BUY'
+      };
+
+      const response = await axios.post('http://localhost:8083/api/trade/buy', postData);
+      
+      if (response.data) {
+        setSuccessMessage(`Successfully bought ${quantity} shares of ${selectedStock.symbol}`);
+        setShowBuyModal(false);
+        setQuantity(1);
+        // Refresh portfolio data
+        fetchAllData();
+      }
+    } catch (err) {
+      console.error('Buy stock error:', err);
+      setBuyError(err.response?.data?.message || 'Failed to complete purchase');
+    } finally {
+      setBuyLoading(false);
+    }
+  };
 
   if (!user || !user.id) {
     return (
@@ -205,7 +286,18 @@ function Portfolio() {
                   </div>
                 </div>
                 <div className="holding-actions">
-                  {/* Remove the update button, keep other actions if needed */}
+                  <button 
+                    className="buy-more-btn"
+                    onClick={() => handleTradeClick(holding, 'BUY')}
+                  >
+                    Buy More
+                  </button>
+                  <button 
+                    className="sell-btn"
+                    onClick={() => handleTradeClick(holding, 'SELL')}
+                  >
+                    Sell
+                  </button>
                 </div>
               </div>
             ))}
@@ -270,7 +362,100 @@ function Portfolio() {
         )}
       </div>
 
-      {/* Remove the UpdateStockModal component */}
+      {/* Trade Modal */}
+      {showTradeModal && selectedHolding && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>{tradeType} {selectedHolding.stock.symbol}</h3>
+            <div className="modal-content">
+              <div className="stock-info">
+                <p>Current Price: ${selectedHolding.stock.price.toFixed(2)}</p>
+                {tradeType === 'SELL' && (
+                  <p>Available Shares: {selectedHolding.quantity}</p>
+                )}
+                <p>Total {tradeType === 'BUY' ? 'Cost' : 'Value'}: 
+                  ${(selectedHolding.stock.price * quantity).toFixed(2)}
+                </p>
+              </div>
+              <div className="quantity-input">
+                <label htmlFor="quantity">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  min="1"
+                  max={tradeType === 'SELL' ? selectedHolding.quantity : undefined}
+                  value={quantity}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value) || 1;
+                    if (tradeType === 'SELL') {
+                      setQuantity(Math.min(Math.max(1, value), selectedHolding.quantity));
+                    } else {
+                      setQuantity(Math.max(1, value));
+                    }
+                  }}
+                />
+              </div>
+              {tradeError && <div className="error-message">{tradeError}</div>}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={() => setShowTradeModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="confirm-btn"
+                  onClick={handleTradeSubmit}
+                  disabled={tradeLoading || (tradeType === 'SELL' && quantity > selectedHolding.quantity)}
+                >
+                  {tradeLoading ? 'Processing...' : `Confirm ${tradeType}`}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Buy Modal */}
+      {showBuyModal && selectedStock && (
+        <div className="modal-overlay">
+          <div className="modal">
+            <h3>Buy {selectedStock.symbol}</h3>
+            <div className="modal-content">
+              <div className="price-info">
+                <p>Current Price: ${selectedStock.price.toFixed(2)}</p>
+                <p>Total Cost: ${(selectedStock.price * quantity).toFixed(2)}</p>
+              </div>
+              <div className="quantity-input">
+                <label htmlFor="quantity">Quantity:</label>
+                <input
+                  type="number"
+                  id="quantity"
+                  min="1"
+                  value={quantity}
+                  onChange={(e) => setQuantity(Math.max(1, parseInt(e.target.value) || 1))}
+                />
+              </div>
+              {buyError && <div className="error-message">{buyError}</div>}
+              <div className="modal-actions">
+                <button 
+                  className="cancel-btn"
+                  onClick={() => setShowBuyModal(false)}
+                >
+                  Cancel
+                </button>
+                <button 
+                  className="confirm-btn"
+                  onClick={handleBuySubmit}
+                  disabled={buyLoading}
+                >
+                  {buyLoading ? 'Processing...' : 'Confirm Purchase'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
